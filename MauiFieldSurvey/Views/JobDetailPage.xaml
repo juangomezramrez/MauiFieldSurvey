@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MauiFieldSurvey.ViewModels"
+             x:Class="MauiFieldSurvey.Views.JobDetailPage"
+             Title="Detalle de Foto"
+             BackgroundColor="Black">
+
+  <Grid RowDefinitions="*, Auto">
+
+    <Image Grid.Row="0" 
+               Source="{Binding ImageSource}" 
+               Aspect="AspectFit"
+               HorizontalOptions="Fill" 
+               VerticalOptions="Fill"/>
+
+    <Frame Grid.Row="1" BackgroundColor="#222" BorderColor="Gray" Margin="10" CornerRadius="10">
+      <VerticalStackLayout Spacing="5">
+        <Label Text="{Binding Job.Timestamp, StringFormat='Fecha: {0:yyyy-MM-dd HH:mm:ss}'}" TextColor="White" FontAttributes="Bold"/>
+        <Label Text="{Binding Job.Latitude, StringFormat='Latitud: {0}'}" TextColor="White"/>
+        <Label Text="{Binding Job.Longitude, StringFormat='Longitud: {0}'}" TextColor="White"/>
+        <Label Text="{Binding Job.Status, StringFormat='Estado: {0}'}" TextColor="Yellow"/>
+
+        <Label Text="{Binding Job.FinalImagePath}" 
+                       TextColor="Gray" 
+                       FontSize="10" 
+                       LineBreakMode="TailTruncation"
+                       IsVisible="{Binding Job.FinalImagePath, Converter={StaticResource InvertedBoolConverter}}"/>
+        <Button Text="Volver" Command="{Binding GoBackCommand}" Margin="0,10,0,0"/>
+      </VerticalStackLayout>
+    </Frame>
+  </Grid>
+</ContentPage>
