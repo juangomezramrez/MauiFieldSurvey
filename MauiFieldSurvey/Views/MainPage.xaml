@@ -5,7 +5,7 @@
              xmlns:models="clr-namespace:MauiFieldSurvey.Models"
              xmlns:converters="clr-namespace:MauiFieldSurvey.Converters"
              x:Class="MauiFieldSurvey.Views.MainPage"
-             Title="Levantamiento en Campo">
+             Title="Levantamiento en Campo linux 4 ">
 
   <ContentPage.Resources>
     <ResourceDictionary>

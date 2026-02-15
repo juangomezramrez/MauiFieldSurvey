@@ -9,6 +9,7 @@ namespace MauiFieldSurvey
             InitializeComponent();
             // REGISTRO DE RUTA DE NAVEGACIÓN
             Routing.RegisterRoute(nameof(JobDetailPage), typeof(JobDetailPage));
+            Routing.RegisterRoute(nameof(CameraPage), typeof(CameraPage)); // Faltaba esta línea
         }
     }
 }

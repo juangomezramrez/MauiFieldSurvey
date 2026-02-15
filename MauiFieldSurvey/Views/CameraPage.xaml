@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:MauiFieldSurvey.Controls"
+             x:Class="MauiFieldSurvey.Views.CameraPage"
+             Title="Cámara Nativa"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="Black">
+
+  <Grid>
+    <controls:NativeCameraView x:Name="cameraView" 
+                                   HorizontalOptions="Fill" 
+                                   VerticalOptions="Fill"
+                                   PhotoCaptured="CameraView_PhotoCaptured"
+                                   CaptureFailed="CameraView_CaptureFailed"/>
+
+    <VerticalStackLayout VerticalOptions="End" Margin="20" Spacing="20">
+      <Label x:Name="lblStatus" 
+                   Text="Apunte y presione capturar" 
+                   TextColor="White" 
+                   BackgroundColor="#88000000" 
+                   HorizontalOptions="Center" 
+                   Padding="10,5"/>
+
+      <Grid ColumnDefinitions="*,*">
+        <Button Grid.Column="0" Text="Volver" Clicked="BtnCancel_Clicked" BackgroundColor="#d32f2f" Margin="0,0,10,0"/>
+        <Button Grid.Column="1" Text="📸 CAPTURAR" Clicked="BtnCapture_Clicked" BackgroundColor="#1976D2"/>
+      </Grid>
+    </VerticalStackLayout>
+  </Grid>
+</ContentPage>

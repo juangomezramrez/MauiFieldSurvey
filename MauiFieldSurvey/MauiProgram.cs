@@ -4,6 +4,8 @@ using MauiFieldSurvey.Models;
 using MauiFieldSurvey.ViewModels; // Agregar
 using MauiFieldSurvey.Views;      // Agregar
 using SkiaSharp.Views.Maui.Controls.Hosting;
+using MauiFieldSurvey.Controls;
+
 
 namespace MauiFieldSurvey
 {
@@ -19,7 +21,14 @@ namespace MauiFieldSurvey
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                });
+                })
+                .ConfigureMauiHandlers(handlers =>
+                {
+                    // AQUÍ REGISTRAMOS EL HANDLER (Compilación Condicional)
+#if ANDROID
+                    handlers.AddHandler(typeof(NativeCameraView), typeof(Platforms.Android.NativeCameraViewHandler));
+#endif
+                }); 
 
 #if DEBUG
             builder.Logging.AddDebug();

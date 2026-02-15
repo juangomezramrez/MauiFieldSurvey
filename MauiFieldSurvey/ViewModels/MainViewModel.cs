@@ -75,85 +75,24 @@ namespace MauiFieldSurvey.ViewModels
             }
         }
 
-        //[RelayCommand]
-        //async Task TakePhoto()
-        //{
-        //    if (IsBusy) return;
-
-        //    try
-        //    {
-        //        IsBusy = true;
-        //        StatusMessage = "Obteniendo GPS...";
-
-        //        var location = await _geoService.GetCurrentLocationAsync();
-        //        if (location == null) location = new Location(0, 0);
-
-        //        StatusMessage = "Abriendo Cámara...";
-
-        //        if (MediaPicker.Default.IsCaptureSupported)
-        //        {
-        //            FileResult photo = await MediaPicker.Default.CapturePhotoAsync();
-
-        //            if (photo != null)
-        //            {
-        //                StatusMessage = "Guardando...";
-
-        //                string localFileName = Path.Combine(FileSystem.AppDataDirectory, $"{Guid.NewGuid()}.jpg");
-
-        //                using (Stream sourceStream = await photo.OpenReadAsync())
-        //                using (FileStream localFileStream = File.OpenWrite(localFileName))
-        //                {
-        //                    await sourceStream.CopyToAsync(localFileStream);
-        //                }
-
-        //                var newJob = new PhotoJob
-        //                {
-        //                    RawImagePath = localFileName,
-        //                    Status = JobStatus.Pending,
-        //                    Latitude = location.Latitude,
-        //                    Longitude = location.Longitude,
-        //                    Altitude = location.Altitude ?? 0,
-        //                    Timestamp = DateTime.Now
-        //                };
-
-        //                await _dbService.AddJobAsync(newJob);
-        //                Jobs.Insert(0, newJob);
-
-        //                StatusMessage = "Procesando foto...";
-
-        //                // INICIO DEL PROCESO PARANOICO:
-        //                // Llamamos al procesador inmediatamente, pero de forma asíncrona
-        //                // para que la UI se actualice mientras trabaja.
-        //                await _imgService.ProcessJobAsync(newJob);
-
-        //                // Forzamos actualización visual del item
-        //                var index = Jobs.IndexOf(newJob);
-        //                if (index >= 0) Jobs[index] = newJob;
-
-        //                StatusMessage = "Foto Completada.";
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        StatusMessage = $"Error: {ex.Message}";
-        //        await App.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
-        //    }
-        //    finally
-        //    {
-        //        IsBusy = false;
-        //    }
-        //}
-        // ... (código anterior)
 
         [RelayCommand]
         async Task TakePhoto()
         {
             if (IsBusy) return;
 
+#if ANDROID
+            // ANDROID: Navega a la cámara nativa segura (CameraX)
+            await Shell.Current.GoToAsync(nameof(Views.CameraPage));
+#else
+            // WINDOWS: Usa el MediaPicker normal que ya probaste que funciona
+            
             try
             {
                 IsBusy = true;
+                StatusMessage = "Abriendo Cámara de Windows...";
+                // ... Aquí pegas tu código original de MediaPicker ...
+                  IsBusy = true;
                 StatusMessage = "Obteniendo GPS...";
 
                 var location = await _geoService.GetCurrentLocationAsync();
@@ -164,7 +103,7 @@ namespace MauiFieldSurvey.ViewModels
                 if (MediaPicker.Default.IsCaptureSupported)
                 {
                     // La cámara guarda esto en CacheDirectory temporalmente
-                    FileResult photo = await MediaPicker.Default.CapturePhotoAsync();
+                    FileResult? photo = await MediaPicker.Default.CapturePhotoAsync();
 
                     if (photo != null)
                     {
@@ -232,7 +171,100 @@ namespace MauiFieldSurvey.ViewModels
             {
                 IsBusy = false;
             }
+            
+#endif
         }
+
+
+        //[RelayCommand]
+        //async Task TakePhoto()
+        //{
+        //    if (IsBusy) return;
+
+        //    try
+        //    {
+        //        IsBusy = true;
+        //        StatusMessage = "Obteniendo GPS...";
+
+        //        var location = await _geoService.GetCurrentLocationAsync();
+        //        if (location == null) location = new Location(0, 0);
+
+        //        StatusMessage = "Abriendo Cámara...";
+
+        //        if (MediaPicker.Default.IsCaptureSupported)
+        //        {
+        //            // La cámara guarda esto en CacheDirectory temporalmente
+        //            FileResult? photo = await MediaPicker.Default.CapturePhotoAsync();
+
+        //            if (photo != null)
+        //            {
+        //                StatusMessage = "Guardando...";
+
+        //                // Ruta Segura (AppData)
+        //                string localFileName = Path.Combine(FileSystem.AppDataDirectory, $"{Guid.NewGuid()}.jpg");
+
+        //                // COPIAR: De Cache -> AppData
+        //                using (Stream sourceStream = await photo.OpenReadAsync())
+        //                using (FileStream localFileStream = File.OpenWrite(localFileName))
+        //                {
+        //                    await sourceStream.CopyToAsync(localFileStream);
+        //                }
+
+        //                // NUEVO: BORRAR EL ORIGINAL DE CACHÉ INMEDIATAMENTE
+        //                // Ya tenemos la copia segura, el original es basura.
+        //                try
+        //                {
+        //                    // FileResult.FullPath apunta al archivo en caché
+        //                    if (File.Exists(photo.FullPath))
+        //                    {
+        //                        File.Delete(photo.FullPath);
+        //                    }
+        //                }
+        //                catch
+        //                {
+        //                    // Si falla borrar el temporal (ej. Android lo retiene un momento), 
+        //                    // no pasa nada, lo borrará el 'OnStart' la próxima vez.
+        //                    Console.WriteLine("No se pudo borrar el temporal inmediatamente.");
+        //                }
+
+        //                // ... (Resto del código: crear Job, guardar en BD, procesar...)
+
+        //                var newJob = new PhotoJob
+        //                {
+        //                    RawImagePath = localFileName,
+        //                    Status = JobStatus.Pending,
+        //                    Latitude = location.Latitude,
+        //                    Longitude = location.Longitude,
+        //                    Altitude = location.Altitude ?? 0,
+        //                    Timestamp = DateTime.Now
+        //                };
+
+        //                await _dbService.AddJobAsync(newJob);
+        //                Jobs.Insert(0, newJob);
+
+        //                StatusMessage = "Procesando foto...";
+
+        //                await _imgService.ProcessJobAsync(newJob);
+
+        //                var index = Jobs.IndexOf(newJob);
+        //                if (index >= 0) Jobs[index] = newJob;
+
+        //                StatusMessage = "Foto Completada.";
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        StatusMessage = $"Error: {ex.Message}";
+        //        await App.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+        //    }
+        //    finally
+        //    {
+        //        IsBusy = false;
+        //    }
+        //}
+       
+        
         [RelayCommand]
         async Task JobTapped(PhotoJob job)
         {
